@@ -1,17 +1,17 @@
-name: Docker Image CI
+name: Docker Image CI for EKS
 
 on:
   push:
-    branches: [ "main" ]
+    paths:
+      - 'src/**'
+      - package.json'
+    # branches: [ "main" ]
 env:
   AWS_REGION: ap-southeast-2
   # WORKING_DIRECTORY: ./demo
 jobs:
-
   build:
-
     runs-on: ubuntu-22.04-arm
-
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 22
