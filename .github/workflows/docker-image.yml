@@ -1,0 +1,52 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+env:
+  AWS_REGION: ap-southeast-2
+  WORKING_DIRECTORY: ./demo
+jobs:
+
+  build:
+
+    runs-on: ubuntu-22.04-arm
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 22
+      uses: actions/setup-java@v3
+      with:
+        java-version: '22'
+        distribution: 'corretto'
+        cache: 'gradle'
+
+    # - name: Run chmod to make gradlew executable
+    #   run: chmod +x ./demo/gradlew
+
+    - name: Gradle Build cryptoApp
+      uses: gradle/actions/setup-gradle@v3
+      with:
+        build-root-directory: ./demo
+    - name: Build with Gradle
+      run: ./gradlew build
+      working-directory: ./demo
+
+    - name: Docker build cryptoApp
+      run: docker build -t gs/arm/pythonapp .
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Publish Image to ECR
+      run: |
+        docker tag gs/arm/pythonapp:latest ${{ secrets.AWS_ECR_REPOSITORY }}:latest
+        docker push ${{ secrets.AWS_ECR_REPOSITORY }}:latest
