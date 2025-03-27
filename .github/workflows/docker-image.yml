@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 env:
   AWS_REGION: ap-southeast-2
-  WORKING_DIRECTORY: ./demo
+  # WORKING_DIRECTORY: ./demo
 jobs:
 
   build:
@@ -26,11 +26,11 @@ jobs:
 
     - name: Gradle Build cryptoApp
       uses: gradle/actions/setup-gradle@v3
-      with:
-        build-root-directory: ./demo
+      # with:
+      #   build-root-directory: ./demo
     - name: Build with Gradle
       run: ./gradlew build
-      working-directory: ./demo
+      # working-directory: ./demo
 
     - name: Docker build cryptoApp
       run: docker build -t gs/arm/pythonapp .
