@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment
+  namespace: springapp
+  labels:
+    app: springapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: springapp
+  template:
+    metadata:
+      labels:
+        app: sparingapp
+    spec:
+      # nodeSelector:
+      #   eks.amazonaws.com/nodegroup: GS-Nodegroup
+      # tolerations:
+      # - key: "eks.amazonaws.com/nodegroup"
+      #   value: "GS-Nodegroup"
+      #   effect: "NoSchedule"
+      # serviceAccountName: crypto-sa
+      containers:
+      - name: springapp
+        image: 603229842386.dkr.ecr.ap-southeast-2.amazonaws.com/gs/arm/pythonapp:latest
+        ports:
+        - containerPort: 8080
